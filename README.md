@@ -30,4 +30,4 @@ This project contains the analysis of an A/B testing experiment for marketing ca
 
 ## Author
 
-- Thanh Nguyen (or GitHub profile link)
+- thanhako1106 (or GitHub profile link)
