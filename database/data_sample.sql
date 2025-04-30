@@ -114,17 +114,21 @@ WITH selected_customers AS (
     SELECT customer_id
     FROM customers
     WHERE random() < 0.7
+),
+customer_campaigns_with_count AS (
+    SELECT
+        cc.customer_id,
+        cc.campaign_id,
+        (FLOOR(random() * 3 + 1))::int AS num_transactions
+    FROM customer_campaigns cc
+    JOIN selected_customers sc ON cc.customer_id = sc.customer_id
 )
 INSERT INTO transactions (customer_id, transaction_date, amount, campaign_id)
 SELECT
-    sc.customer_id,
-    DATE '2024-06-01' + (random() * 29)::int,
-    round((10 + random() * 490)::numeric, 2), 
-    cc.campaign_id
-FROM
-    selected_customers sc
-JOIN
-    customer_campaigns cc ON sc.customer_id = cc.customer_id
-CROSS JOIN
-    generate_series(1, (random() * 2 + 1)::int) gen;
+    c.customer_id,
+    DATE '2024-06-01' + (random() * 29)::int AS transaction_date,
+    ROUND((10 + random() * 490)::numeric, 2) AS amount,
+    c.campaign_id
+FROM customer_campaigns_with_count c
+JOIN generate_series(1, c.num_transactions) AS gen(x) ON TRUE;
 
